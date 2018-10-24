@@ -1,9 +1,16 @@
-This contains the main codes to 
-1) simulate data
-2) solve the problem
-3) generate the figures
+This directory is part of the repository
+github.com/CMUSchwartzLab/SCS_deconvolution
 
-Codes are created by Lei, Haoyun & Lyu, Bochuan, modifed by Lei, Haoyun
+that contains software to solve several formulations of the problem of deconvolving bulk tumor data into subpopulations,
+as described in (Lei et al., in preparaion)
+
+This directory contains the main prorgams to 
+1) simulate data
+2) solve the deconvolution problem in two different ways
+3) generate the figures for the manuscript
+
+Programs were written initially by Haoyun Lei and Bchuan Lyu. Programs were modified by Haoyun Lei and E. Michael Gertz. Programs were tested by
+E. Michael Gertz, Haoyun Lei, Bchuan Lyu, and Alejandro Schaffer.
 
 ###################################################################################################################################
 ### Before you call any function, please move the test folder into the parent folder of LLSolver, 
@@ -109,5 +116,6 @@ DecomposeSolver.py
 ###################################################################################################################################
   
   
-
- 
+Reference:
+Haoyun Lei, Bochuan Lyu, E. Michael Gertz, Alejandro A. Schaffer, Xulian Shi, Kui Wu, Guibo Li, Liqin Xu, Yong Hou, Michael Dean, Russell Schwartz,
+Tumor Copy Number Deconvolution Integrating Bulk and Single-Cell Sequencing Data, in preparation.
