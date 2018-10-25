@@ -2,9 +2,21 @@ This directory is part of the repository
 github.com/CMUSchwartzLab/SCS_deconvolution
 
 that contains software to solve several formulations of the problem of deconvolving bulk tumor data into subpopulations,
-as described in (Lei et al., in preparaion)
+as described in (Lei et al., in preparation)
 
-This directory contains the main prorgams to 
+The manuscript describes two methods called "phylogeny-free' and "phylogeny-based". Much of the documentation below assumes that the
+user has at least skimmed the manuscript and is familiar with the terminology therein.
+
+The present structure of the repository is that, except for README.md, all files are in the subdirectory
+schwartzlab/LLSolver
+
+The setup assumes that the user will create another subdirectory
+schwartzlab/test
+
+so that LLSolver and test are parallel subdirectories.
+Various other subdirectories get created to store the simulated data for deconvolution tests
+
+This LLsolver subdirectory contains the main prorgams to 
 1) simulate data
 2) solve the deconvolution problem in two different ways
 3) generate the figures for the manuscript
@@ -12,24 +24,27 @@ This directory contains the main prorgams to
 Programs were written initially by Haoyun Lei and Bchuan Lyu. Programs were modified by Haoyun Lei and E. Michael Gertz. Programs were tested by
 E. Michael Gertz, Haoyun Lei, Bchuan Lyu, and Alejandro Schaffer.
 
+All programs are written in python3 (not python2). Some programs assume the avilability of the Gurobi package to solve optimization problems.
+All programs assume the available of the numpy package.
+
 ###################################################################################################################################
-### Before you call any function, please move the test folder into the parent folder of LLSolver, 
-### so that test/ and LLSolver/ will be parallel in the same parent folder (See ReadMe.txt in test folder)
 
 DataSimulation.py 
-  #This is to simulate bulk tumor data with desired number of samples from the single cell sequencing data
-  #Simulation is based Geometric Mix Model
-  
+  #This program simulates bulk tumor data with desired number of samples from the single cell sequencing data
+  #Simulation is based on the Geometric Model described in the manuscript and uses a Dirichlet distribution
+
+  The arguments to DataSimulation.py are as follows:
+
   ParentDirectory: specify a directory that contains the LLSolver folder
-  DateFolder: you may do different simulation at different time, this is just for you to record different date
-  TumorName: pick a tumor from which you choose the single cell data, now the available single cell data are from GBM07 or GBM33
-  tumor_number: choose how many tumor samples you want to simulate, in the current experiment, we do 3, 6, 9 samples
-  alpha: the alpha parameter for the dirichlet distribution, this is F matrix in the objective, please refer to the paper
-  N: the number of simulated data you want to get
-  Cap: True of False, if or not cap the CN larger than 10 to 10
+  DateFolder: allows for different simulations run on different dates to be stored n different subdirectories (a.k.a. folders)
+  TumorName: pick a tumor from which you choose the single cell data; the available data are from two tumors named GBM07 or GBM33 (GBM is short for glioblastoma multiforme)
+  tumor_number: choose how many tumor samples you want to simulate, in the main experiments in the manuscript, we chose 3, 6, or 9 samples
+  alpha: the alpha parameter for the Dirichlet distribution, describe in the manuscript
+  N: the number of simulated replicates (the manuscript uses N=40)
+  Cap: True of False, whether or not to cap the copy numbers larger than 10 at 10 (this was set to True for all runs in the manuscript and must be set to True for the example data provided)
   
 
-The folder structure now will be as following:
+After running DataSimulation.py the folder/subdirectory structure should be abstractly as follows:
 /some/path/to/the/ParentDirectory:
                                   /data/single cell sequencing data
                                   /LLSolver/DataSimulation.py
@@ -49,6 +64,10 @@ The folder structure now will be as following:
                                              /TestCase2.sh
                                              ...
                                              /TestCaseN.sh
+
+Here, GBM07 is the tumor name selected 9and could be GBM33 instead). Here, 3 is number of samples.
+GTest refers to the phylogeny-based method, which uses the Gurobi (hence the G) python library, while Ntest refers to the phylogeny-free method, which is also called non-negative
+matrix factorization (NMF, hence the N).
 
 
   ImportSCData(ImportSCData(ParentDirectory, TumorName, IntCNV=True, Cap=False)
