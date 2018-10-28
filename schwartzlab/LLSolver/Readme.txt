@@ -7,14 +7,16 @@ as described in (Lei et al., in preparation)
 The manuscript describes two methods called "phylogeny-free' and "phylogeny-based". Much of the documentation below assumes that the
 user has at least skimmed the manuscript and is familiar with the terminology therein.
 
-The present structure of the repository is that, except for README.md, all files are in the subdirectory
+The present structure of the repository is that, except for README.md, all files are in the subdirectories
 schwartzlab/LLSolver
-
-The setup assumes that the user will create another subdirectory
+schwartzlab/data
 schwartzlab/test
 
-so that LLSolver and test are parallel subdirectories.
-Various other subdirectories get created to store the simulated data for deconvolution tests
+The setup assumes that the user will create another subdirectory
+schwartzlab/simulation
+
+The exact naming of the subdirectories can vary, but it is inherent and some of the code and
+documentation that the four subdirectories {LLSolver, data, test, simulation} are parallel, at the same level.
 
 This LLsolver subdirectory contains the main prorgams to 
 1) simulate data
@@ -29,12 +31,15 @@ All programs are written in python3 (not python2). Some programs assume the avil
 to solve optimization problems. We are also testing SCIP (https://scip.zib.de/index.php#download) as an alternative to Gurobi, but all analyses in the
 manuscript that used an optimization package were done with Gurobi.
 Several programs assume the availability of the numpy and scipy packages.
+Example shell scripts call
+  python
+with the assumption that on the user's system python defaults to python 3. If that is not the case, then
+it is necessary to change calls to python to calls to python3.
 
 The main programs that a user may want to try are:
-DataSimulation.py
-DecomposeSolver.py
-SimSCS.py
-NMFmainfunc.py
+SimulateSCS.py      [simulate single-cell dataresembling the observed data]
+DataSimulation.py   [simulate many replicates of the hypothetical bulk data from the output of SimulateSCS.py or from the observed single-cell data]
+DecomposeSolver.py  [solve the deconvolution problem]
 
 DecomposeSolver.py will in turn use one of 
   NMF_solver.py
@@ -46,6 +51,35 @@ the optimization problem in the phylogeny-based method.
 
 Several utility functions are in the code file testFunction.py
 
+###################################################################################################################################
+
+The purpose of SimulateSCS.py is to simulate realistic single-cell data that is similar to the observed single-cell data. The
+program SimulateSCS.py is needed because the observed data are human subjects data, which cannot be redistributed.
+SimulateSCS.py uses summary statistics from he observed data, which can be found in subdirectory
+schwartzlab/data
+
+SimulateSCS.py takes four arguments:
+1st: The full path to the data directory
+2nd: The tumor name, which is GBM07 or GBM33
+3rd: The integer mean of the Poissson distribution used in the simulation (denoted by lam, short for lambda, in the code)
+4th: The depth of the binary tree of single cells that defines the clone structure
+
+Example outputs are shown in
+schwartzlab/data/simulated_GBM07_integer_CNV.csv
+schwartzlab/data/simulated_GBM33_integer_CNV.csv
+
+and these were obtained via the calls
+python SimulateSCS.py 'PATH/TO/Cell/Information' GBM07 115 6
+python SimulateSCS.py 'PATH/TO/Cell/Information' GBM33 45 6
+
+The lam (3rd argument values) of 115 and 45 are recommended for GBM07 and GBM33 respectively.
+
+If the user wishes to change the seed for the random number generator, then it is necessary to modify SimulateSCS.py
+and make an assignment to variable
+seed
+at the top of the program.
+
+
 
 
 ###################################################################################################################################
@@ -56,18 +90,31 @@ DataSimulation.py
 
   The arguments to DataSimulation.py are as follows:
 
-  ParentDirectory: specify a directory that contains the LLSolver folder
-  DateFolder: allows for different simulations run on different dates to be stored n different subdirectories (a.k.a. folders)
-  TumorName: pick a tumor from which you choose the single cell data; the available data are from two tumors named GBM07 or GBM33 (GBM is short for glioblastoma multiforme)
-  tumor_number: choose how many tumor samples you want to simulate, in the main experiments in the manuscript, we chose 3, 6, or 9 samples
-  alpha: the alpha parameter for the Dirichlet distribution, describe in the manuscript
-  N: the number of simulated replicates (the manuscript uses N=40)
-  Cap: True of False, whether or not to cap the copy numbers larger than 10 at 10 (this was set to True for all runs in the manuscript and must be set to True for the example data provided)
-  
+1st  ParentDirectory: specify a directory that contains the LLSolver folder
+2nd  DateFolder: allows for different simulations run on different dates to be stored n different subdirectories (a.k.a. folders)
+3rd  TumorName: pick a tumor from which you choose the single cell data; the name of the input files should be ../data/<TumorName>_Integer_CNV.csv
+4th  tumor_number: choose how many tumor samples you want to simulate, in the main experiments in the manuscript, we chose 3, 6, or 9 samples
+5th  alpha: the alpha parameter for the Dirichlet distribution, describe in the manuscript
+6th  N: the number of simulated replicates (the manuscript uses N=40)
+7th  Cap: True of False, whether or not to cap the copy numbers larger than 10 at 10 (this was set to True for all runs in the manuscript and must be set to True for the example data provided)
+
+Example calls to DataSimulation.py can be found in the scripts
+schwartzlab/test/runDataSimulationGBM07.sh
+schwartzlab/test/runDataSimulationGBM33.sh
+but those are for the observed data.
+If one wants to use the simulated data, simulated_GBM07_integer_CNV.csv or simulated_GBM07_integer_CNV.csv, then
+the third argument, TumorName, should be specified as
+simulated_GBM07
+or
+simulated_GBM33
+respectively.
+
+To reuse the scripts runDataSimulationGBM07.sh and runDataSimulationGBM33.sh, the user must also replace the example full paths give, with other full paths that are suitable
+for the user's installation of this repository.
 
 After running DataSimulation.py the folder/subdirectory structure should be abstractly as follows:
 /some/path/to/the/ParentDirectory:
-                                  /data/single cell sequencing data
+                                  /data
                                   /LLSolver/DataSimulation.py
                                            /DecomposeSolver.py
                                            /....
@@ -77,18 +124,20 @@ After running DataSimulation.py the folder/subdirectory structure should be abst
                                                                 ...
                                                                 /simulateDataN
                                                                 
-                                  /test/GTest/TestCase1.sh
-                                             /TestCase2.sh
+                                  /test/GTest/<TestCase1>.sh
+                                             /<TestCase2>.sh
                                              ...
-                                             /TestCaseN.sh
-                                       /NTest/TestCase1.sh
-                                             /TestCase2.sh
+                                             /<TestCaseN>.sh
+                                       /NTest/<TestCase1>.sh
+                                             /<TestCase2>.sh
                                              ...
-                                             /TestCaseN.sh
+                                             /<TestCaseN>.sh
 
 Here, GBM07 is the tumor name selected and could be GBM33 instead). Here, 3 is number of samples.
 GTest refers to the phylogeny-based method, which uses the Gurobi (hence the G) python library, while Ntest refers to the phylogeny-free method, which is also called non-negative
 matrix factorization (NMF, hence the N).
+
+<TestCase1>.sh through <TestCaseN>.sh are abstract names for the shell scripts that call DecomposeSolver.py.
 
 DataSimulation.py contains two auxiliary functions
 
@@ -120,19 +169,19 @@ DecomposeSolver.py
                                            /DecomposeSolver.py
                                            /....
                                            
-                                  /simulation/DateFolder/GBM07/3/simulateData1
-                                                                /simulateData2
+                                  /simulation/DateFolder/GBM07/3/<simulateData1>
+                                                                /<simulateData2>
                                                                 ...
-                                                                /simulateDataN
+                                                                /<simulateDataN>
                                                                 
-                                  /test/GTest/TestCase1.sh
-                                             /TestCase2.sh
+                                  /test/GTest/<TestCase1>.sh
+                                             /<TestCase2>.sh
                                              ...
-                                             /TestCaseN.sh
-                                       /NTest/TestCase1.sh
-                                             /TestCase2.sh
+                                             /<TestCaseN>.sh
+                                       /NTest/<TestCase1>.sh
+                                             /<TestCase2>.sh
                                              ...
-                                             /TestCaseN.sh
+                                             /<TestCaseN>.sh
                                              
                                   /results/DataFolder/GBM07/3/nmf/result_for_simulateData1
                                                                  /result_for_simulateData2
@@ -158,9 +207,16 @@ DecomposeSolver.py includes the following auxiliary functions:
 
 and imports additional functions from NMF_solver.py
 
+In the git repository, the directories
+schwartzlab/test/GTest
+schwartzlab/test/NTest
+
+each contain one example of what <TestCase1>.sh could look like.
+
+
 ###################################################################################################################################
   
-GurobiILP_solver.py
+GurobiILP_solver.py is called via DecomposeSolver.py, not directly by the user
 
 GurobiILP_solver.py includes the following auxiliary functions:
 
@@ -173,9 +229,10 @@ GurobiILP_solver.py includes the following auxiliary functions:
 
 ###################################################################################################################################
   
-SCIP_solver.py
+SCIP_solver.py is called via DecomposeSolver.py, not directly by the user
 
 SCIP_solver.py includes the same auxilliary functions as GurobiILP_solver.py
+
 
 
 
