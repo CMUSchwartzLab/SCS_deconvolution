@@ -216,6 +216,17 @@ each contain one example of what <TestCase1>.sh could look like.
 
 ###################################################################################################################################
   
+NMF_solver.py is called via DecomposeSolver.py, not directly by the user
+
+NMF_solver.py includes one auxiliary function:
+
+decompose(tumorMat, major_F, major_cellMat, refer_cellMat, initial_cellMat,
+              threshold=1, reg1=0.002, k=6, diploidRatio=0, IncludeInitial=True, seedNum=None):
+
+
+
+###################################################################################################################################
+  
 GurobiILP_solver.py is called via DecomposeSolver.py, not directly by the user
 
 GurobiILP_solver.py includes the following auxiliary functions:
