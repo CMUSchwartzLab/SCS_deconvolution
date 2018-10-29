@@ -25,7 +25,7 @@ Cap = bool(sys.argv[7])          # the largest permitted copy-number; larger
 
 #check and/or make the directory to save the simulated data
 #save the simulated data with different tumor samples in different data
-output_dir = '%ssimulation/%s/%s'%(ParentDirectory, TumorName, str(tumor_number))
+output_dir = '%ssimulation/%s/%s/%s'%(ParentDirectory, DateFolder, TumorName, str(tumor_number))
 testFunction.CheckDirectory(output_dir)
 
 '''
@@ -51,9 +51,9 @@ def ImportSCData(ParentDirectory, TumorName, IntCNV=True, Cap=False):
     '''
 
     if IntCNV:  #get the integer copy number
-        DataPath = ParentDirectory + 'data/' + TumorName + '_integer_CNV.csv'
+        DataPath = ParentDirectory + 'data/' +  '%s_integer_CNV.csv' % TumorName 
     else:
-        DataPath = ParentDirectory + 'data/' + TumorName + '_fractional_CNV.csv'
+        DataPath = ParentDirectory + 'data/' + '%s_fractional_CNV.csv' % TumorName
     
     allSC = np.genfromtxt(DataPath, delimiter=',')
     if Cap:    #Cap the copy number larger than 10 to 10

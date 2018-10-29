@@ -4,6 +4,7 @@ import numpy as np
 import sys, glob
 import testFunction
 import ast
+import networkx as nx
 import pandas as pd
 import scipy.io as sio
 
@@ -96,25 +97,27 @@ grouped barplot:
     a grouped barplot to show the average performance 
     in random initialization and w/ penalty
 """
-def GroupBarPlot(solver, groupedData, key, DipData=None, NoInitialData=None):
+def GroupBarPlot(solver, groupedData, key, kw, DipData=None, NoInitialData=None):
     #merge the dataframe by pivoiting the TumorSamples columns
     df = pd.melt(groupedData, id_vars=['Tumor Samples'],
                  var_name='Penalty', value_name='Average %s' % key)
     #plt.figure(figsize=(8, 6))
-    sns.barplot(x='Tumor Samples', y='Average %s' % key,
-                hue='Penalty', data=df)
+    b = sns.barplot(x='Tumor Samples', y='Average %s' % key,
+                    hue='Penalty', data=df)
+    b.set_xlabel('Tumor Samples', fontsize=16)
+    b.set_ylabel('Average %s' % key, fontsize=16)
     if DipData != None:
         # plot a dashed line of average  result of Diploid guess
-        plt.axhline(DipData, color='k', linestyle='--', lw='2')
+        plt.axhline(DipData, color='k', linestyle='--')
     if NoInitialData != None:
         # plot a dashed line of average  result of random initialization
-        plt.axhline(NoInitialData, color="#e74c3c", linestyle='--', lw='2')
-    plt.title('Average %s in different test cases' % key, fontsize=14)
+        plt.axhline(NoInitialData, color="#e74c3c", linestyle='--')
+    plt.title('Average %s of %s' % (key, kw), fontsize=18)
     plt.legend(title='ReguPara', loc='center right',
                bbox_to_anchor=(1.22, 0.65))
     #plt.show()
-    plt.savefig('%sfigures/%s/%s/%s_%s_barplot.png' %
-                (ParentDirectory, SavedFolder, TumorName, solver, key),
+    plt.savefig('%sfigures/%s/%s/%s_%s_%s_barplot.png' %
+                (ParentDirectory, SavedFolder, TumorName, solver, key, kw),
                 bbox_inches='tight', dpi=600)
 
 
@@ -184,16 +187,15 @@ def PlotCNV(dataLst1, dataLst2, solver):
         axs[i].plot(dataLst1[i], lw=8, color='C1', label='True Copy Number')
         axs[i].plot(dataLst2[i], ls='--', color='k',
                     label='Inferred Copy Number')
-        axs[i].set_title('%s tumor samples' % TumorNumbers[i])
+        axs[i].set_title('%s tumor samples' % TumorNumbers[i], fontsize=19)
     handles, labels = axs[0].get_legend_handles_labels()
     fig.legend([handles[0], handles[-1]], [labels[0], labels[-1]],
                loc='center right', bbox_to_anchor=(1, 0.07))
 
-    fig.suptitle('Copy Number Comparison in Infered and True Cell',
-                 y=1.05, fontsize=14)
-    fig.text(0.5, -0.06, 'Genomic Loci', ha='center', fontsize=13)
+    #fig.suptitle('Copy Number Comparison in Infered and True Cell',  y=1.05, fontsize=14)
+    fig.text(0.5, -0.06, 'Genomic Loci', ha='center', fontsize=17)
     fig.text(-0.005, 0.5, 'Copy Number', va='center',
-             rotation='vertical', fontsize=13)
+             rotation='vertical', fontsize=17)
     plt.tight_layout()
     plt.savefig('%sfigures/%s/%s/%s_CNV.png' %
                 (ParentDirectory, SavedFolder, TumorName, solver),
@@ -219,7 +221,7 @@ def BestResult(solver, Date, TumorNumbers, RegPara, key, average=True):
 Function to compare the results between solvers
 Now only works for NMG and Gurobi
 """
-def BarPlotOfSolver(NMFdata, gurobiData, value_name):
+def BarPlotOfSolver(NMFdata, gurobiData, value_name, kw):
     #combine the two dataframes to one
     m, n = NMFdata.shape
     NMFdata['solver'] = ['phylogeny-free'] * m
@@ -231,12 +233,13 @@ def BarPlotOfSolver(NMFdata, gurobiData, value_name):
                                 'solver'], value_name=value_name)
     #plt.figure(figsize=(10,10))
     sns.barplot(x='Tumor Samples', y=value_name, hue='solver', data=df)
-    plt.ylabel('Average %s' % value_name)
-    plt.title("%s Comparision between Phylogeny-free and based Methods" % value_name)
+    plt.ylabel('Average %s' % value_name, fontsize=16)
+    plt.xlabel('Tumor Samples', fontsize=16)
+    plt.title("%s %s" % (kw, value_name), fontsize=18)
     plt.legend(title='Method', loc='center right', bbox_to_anchor=(1.4, 0.65))
     #plt.show()
-    plt.savefig('%sfigures/%s/%s/%s_compare.png' %
-                (ParentDirectory, SavedFolder, TumorName, value_name),
+    plt.savefig('%sfigures/%s/%s/%s_%s_compare.png' %
+                (ParentDirectory, SavedFolder, TumorName, value_name, kw),
                 bbox_inches='tight', dpi=600)
 
 
@@ -290,7 +293,7 @@ def BoxPlotInCell(solver, dataframe, kw1, kw2):
     for i in range(unique_samples.shape[0]):
         ax = sns.boxplot(x='Cell', y='Average %s' % kw1, hue='ReguPara',
                          data=df[df['Tumor Samples'] == unique_samples[i]], ax=axs[i])
-        ax.set_title('%s tumor samples' % str(unique_samples[i]))
+        ax.set_title('%s tumor samples' % str(unique_samples[i]), fontsize=19)
         ax.legend().set_visible(False)
 
     for ax in axs:
@@ -299,10 +302,10 @@ def BoxPlotInCell(solver, dataframe, kw1, kw2):
 
     handles, labels = axs[-1].get_legend_handles_labels()
     fig.suptitle(
-        '%s of %s in Each Cell Component' % (kw1, kw2), y=1.05, fontsize=14)
-    fig.text(0.5, -0.005, 'Cell Components', ha='center', fontsize=13)
+        '%s of %s in Each Cell Component' % (kw1, kw2), y=1.05, fontsize=21)
+    fig.text(0.5, -0.005, 'Cell Components', ha='center', fontsize=17)
     fig.text(-0.005, 0.5, '%s' % kw1, va='center',
-             rotation='vertical', fontsize=13)
+             rotation='vertical', fontsize=17)
     axs[-1].legend(handles, labels, title='ReguPara',
                    loc='center right', bbox_to_anchor=(1.2, 0.5))
     plt.tight_layout()
@@ -345,7 +348,7 @@ def BoxPlotComparison(NMFdata, gurobiData, kw1, kw2):
     for i in range(unique_samples.shape[0]):
         ax = sns.boxplot(x='Cell', y='Average %s' % kw1, hue='solver',
                          data=df[df['Tumor Samples'] == unique_samples[i]], ax=axs[i])
-        ax.set_title('%s tumor samples' % str(unique_samples[i]))
+        ax.set_title('%s tumor samples' % str(unique_samples[i]), fontsize=19)
         ax.legend().set_visible(False)
 
     for ax in axs:
@@ -354,10 +357,10 @@ def BoxPlotComparison(NMFdata, gurobiData, kw1, kw2):
 
     handles, labels = axs[-1].get_legend_handles_labels()
     fig.suptitle(
-        '%s of %s in Each Cell Component' % (kw1, kw2), y=1.05, fontsize=14)
-    fig.text(0.5, -0.005, 'Cell Components', ha='center', fontsize=13)
+        '%s of %s in Each Cell Component' % (kw1, kw2), y=1.05, fontsize=21)
+    fig.text(0.5, -0.005, 'Cell Components', ha='center', fontsize=17)
     fig.text(-0.005, 0.5, '%s' % kw1, va='center',
-             rotation='vertical', fontsize=13)
+             rotation='vertical', fontsize=17)
     axs[-1].legend(handles, labels, title='ReguPara',
                    loc='center right', bbox_to_anchor=(1.2, 0.5))
     plt.tight_layout()
@@ -365,3 +368,42 @@ def BoxPlotComparison(NMFdata, gurobiData, kw1, kw2):
                 (ParentDirectory, SavedFolder, TumorName, kw1, kw2),
                 bbox_inches='tight', dpi=600)
 
+"""
+Functions to plot all the tree structure
+"""
+
+#This is to take the Tree Matrix in the result as input 
+#and output the tree
+def plotTree(S, root, filename='example.png'):
+    G = nx.DiGraph()
+    fromList = []
+    toList = []
+
+    G.add_node(root)
+    for i in range(S.shape[0]):
+        if (i != root):
+            G.add_node(i)
+
+    for i in range(S.shape[0]):
+        for j in range(S.shape[1]):
+            if (S[i, j] != 0):
+                fromList.append(i)
+                toList.append(j)
+
+    for i in range(len(fromList)):
+        G.add_edge(fromList[i], toList[i], weight=1)
+    elarge = [(u, v) for (u, v, d) in G.edges(data=True)]
+    p = nx.drawing.nx_pydot.to_pydot(G)
+
+    p.write_png(filename)
+
+#This is to plot all the tree in the result, 
+# and store them as indepent .png files
+def PlotAllTrees(SavePath, TumorNumber, ReguPara, solver='gurobi'):
+    for item in ReguPara:
+        Paths = glob.glob('%sresults/%s/%s/%s/%s/result*alpha%s.mat' % (ParentDirectory, DateFolder,
+                                                                        TumorName, TumorNumber, solver, item))
+        testFunction.CheckDirectory('%s%s/%s/' % (SavePath, TumorNumber, item))
+        for i in len(Paths):
+            plotTree(S=extractValue(Paths[i], 'TreeStr'), root=12,
+                                    filename='%s%s/%s/' % (SavePath, TumorNumber, item)+'%s.png' % i)

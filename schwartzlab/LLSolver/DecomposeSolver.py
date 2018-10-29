@@ -6,7 +6,7 @@ import time
 import testFunction
 
 ParentDirectory = sys.argv[1]   #get to directory that contain other subfolder such as code/ test/ data/ etc.
-DateFolder = str(sys.argv[2])   #specify a folder to save the results
+DateFolder = str(sys.argv[2])   #specify a folder to retrive the data, it also save the result in a folder with corresponding name
 TumorName = str(sys.argv[3])    #pick a tumor, GBM07 or GBM33
 TumorNumber = int(sys.argv[4])  #specify a tumor sample number so it can get data from that subfolder
 reg1 = float(sys.argv[5])       #regularization parameter for nmf
@@ -15,7 +15,7 @@ beta = float(sys.argv[7])       #regularization parameter for SCIP
 solver = str(sys.argv[8])
 #get the directory of each simulated data
 #AllDataPaths = glob.glob(ParentDirectory +'simulation/*.mat')
-AllDataPaths = glob.glob('%ssimulation/%s/%s/*.mat'%(ParentDirectory, TumorName, str(TumorNumber)))
+AllDataPaths = glob.glob('%ssimulation/%s/%s/%s/*.mat'%(ParentDirectory, DateFolder, TumorName, str(TumorNumber)))
 def extractValue(directory):
     data = sio.loadmat(directory)
     return data['CIndex'], data['CRefer'], data['CReferIndex'], data['CInitial'],\
