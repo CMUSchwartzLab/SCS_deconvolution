@@ -8,10 +8,10 @@ cd '/pghbio/cure/hylei/TumorDecompose/LLSolver'
 this is a description of the seven arguments
 1s argv: string, the full path to the parent directory that contains subfolders such as 
             LLSolver/
-			simulation/ 
-			results/ 
-			data/ 
-			etc..
+	    simulation/ 
+	    results/ 
+            data/ 
+	    etc..
 2nd argv: string, specify a folder name to store the simualtion, 
           we suggest to use the date to name this folder
 3nd argv: string, this is to choose tumor name, GBM07 or GBM33
