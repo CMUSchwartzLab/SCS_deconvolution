@@ -6,47 +6,19 @@ https://github.com/CMUSchwartzLab/SCS_deconvolution.git
 
 that contains software to solve several formulations of the problem of
 deconvolving bulk tumor data into subpopulations, as described in (Lei
-et al., in preparation).
-
-The manuscript describes two methods called "phylogeny-free' and
-"phylogeny-based". Much of the documentation below assumes that the
-user has at least skimmed the manuscript and is familiar with the
+et al., in preparation).  Much of the documentation below assumes that
+the user has at least skimmed the manuscript and is familiar with the
 terminology therein.
 
-The present structure of the repository is that, except for README.md,
-all files are in the subdirectories
-
-* schwartzlab/LLSolver
-* schwartzlab/data
-* schwartzlab/test
-
-The setup assumes that the user will create another subdirectory
-`schwartzlab/simulation`.
-
-The exact naming of the subdirectories can vary, but it is inherent
-and some of the code and documentation that the four subdirectories
-{LLSolver, data, test, simulation} are parallel, at the same level.
-
-This LLsolver subdirectory contains the main programs to 
-1) simulate data
-2) solve the deconvolution problem in two different ways
-3) generate the figures for the manuscript
-
-Programs were written initially by Haoyun Lei and Bochuan Lyu. Programs
-were modified by Haoyun Lei and E. Michael Gertz. Programs were tested
-by E. Michael Gertz, Haoyun Lei, Bochuan Lyu, and Alejandro Schaffer.
-
-All programs are written in python3 (not python2). Some programs
-assume the availability of the Gurobi package
-(http://www.gurobi.com/downloads/download-center) to solve
-optimization problems. We are also testing SCIP
-(https://scip.zib.de/index.php#download) as an alternative to Gurobi,
-but all analyses in the manuscript that used an optimization package
-were done with Gurobi.  Several programs assume the availability of
-the numpy and scipy packages.  Example shell scripts call python with
-the assumption that on the user's system python defaults to python
-3. If that is not the case, then it is necessary to change calls to
-python to calls to python3.
+In short, this repository contains implementations of the
+"phylogeny-free' and "phylogeny-based" described in the manuscript,
+and simulated data that may be used to test these problems.  It also
+contains scripts that _could_ be used to produce the semi-simulated
+data and figures in the paper.  These scripts are provided as
+documentation of what was done, but the semi-simulated data is based
+on human subjects data, which cannot be redistributed.  Thus, most
+users will probably want to try the deconvolution algorithms on
+fully-simulated data.
 
 The main programs that a user may want to try are:
 
@@ -59,18 +31,138 @@ The main programs that a user may want to try are:
 
 * **DecomposeSolver.py**  [solve the deconvolution problem]
 
-DecomposeSolver.py will in turn use one of 
+The DecomposeSolver.py script will typically be the best place to
+start.
+
+Programs were written initially by Haoyun Lei and Bochuan Lyu. Programs
+were modified by Haoyun Lei and E. Michael Gertz. Programs were tested
+by E. Michael Gertz, Haoyun Lei, Bochuan Lyu, and Alejandro Schaffer.
+
+----------
+# Installation
+
+Users should clone the git repository, possibly by typing,
+```
+git clone https://github.com/CMUSchwartzLab/SCS_deconvolution.git
+```
+Instructions in this README assume a GNU Linux command line or a
+Macintosh terminal.  The `git` command above will create a
+subdirectory named `SCS_deconvolution`.  The instructions assume that 
+the user's current directory is
+`SCS_deconvolution/schwartzlab/LLSolver`, in other words the directory that
+contains the `README.md` that you are currently reading.
+
+The setup assumes that the user will create another subdirectory
+`SCS_deconvolution/schwartzlab/simulation`.  It is inherent to the
+code and documentation that the four subdirectories {LLSolver, data,
+test, simulation} are parallel, at the same level.  For scripts that
+require a path, the user should always specify an absolute path (a
+path that starts with `/`).  We cannot include such paths in this 
+document, because they are specific to the user's file system.
+
+The scripts in that end in `.py` must be run using python3, not
+python2.  The scripts that end in `.sh` are intended to be run using
+bash.  Some programs assume the availability of the Gurobi package
+(http://www.gurobi.com/downloads/download-center) to solve
+optimization problems. We are also testing SCIP
+(https://scip.zib.de/index.php#download) as an alternative to Gurobi,
+but all analyses in the manuscript that used an optimization package
+were done with Gurobi.  Several programs assume the availability of
+the python3 numpy and scipy packages.
+
+----------------------
+## DecomposeSolver.py
+
+This is the main program that decomposes the bulk tumor data to
+resolve the copy number in 9934 loci in each fundamental cell type.
+The code will retrieve the simulation data if you set up the input
+arguments correctly (see below)
+
+DecomposeSolver.py will use one of three methods, chosen by the user,
+to solve the tumor decomposition problem.  The code for these methods
+are in
 
   * NMF_solver.py
   * GurobiILP_solver.py
   * SCIP_solver.py
 
-to solve the optimization problems in whichever of the two
-formulations is chosen. NMF_solver.py solves the optimization problem
-in the phylogeny-free method, while GurobiILP_solver and SCIP_solver
+though the user should not invoke these files directly.
+`NMF_solver.py` solves the deconvolution optimization problem in the
+phylogeny-free method, while `GurobiILP_solver` and `SCIP_solver`
 solve the optimization problem in the phylogeny-based method.
 
-Several utility functions are in the code file testFunction.py
+The code will solve all the problmes in the `simulateData1` to
+`simulateDataN` subfolders when you specify the number of tumor
+samples, e.g. if the number of tumor samples is 3, it will solve all
+the simulateData saved in the folder and save the results for each of
+the simulateData
+
+  * ParentDirectory: specify a directory that contains the LLSolver folder
+
+  * DateFolder: you may do different simulation at different time,
+    this is just for you to record different date, consistent with the
+    one you set up with DataSimulation.py
+
+  * TumorName: pick a tumor from which you choose the single cell
+    data, now the available single cell data are from GBM07 or GBM33
+
+  * TumorNumber: specify a tumor sample number so it can get data from
+    that subfolder of the simulation folder
+
+  * reg1: regularization parameter of the penalty in nmf, only will be
+    effective if the solver is nmf
+
+  * alpha: regularization parameter of the penalty in ILP, only will
+    be effective if the solver is gurobi solver: choose nmf or gurobi
+    to solve the problem
+
+The folder structure will be as following:
+```
+  /some/path/to/the/ParentDirectory:
+                                  /data/single cell sequencing data
+                                  /LLSolver/DataSimulation.py
+                                           /DecomposeSolver.py
+                                           /....
+
+                                  /simulation/DateFolder/GBM07/3/<simulateData1>
+                                                                /<simulateData2>
+                                                                ...
+                                                                /<simulateDataN>
+
+                                  /test/GTest/<TestCase1>.sh
+                                             /<TestCase2>.sh
+                                             ...
+                                             /<TestCaseN>.sh
+                                       /NTest/<TestCase1>.sh
+                                             /<TestCase2>.sh
+                                             ...
+                                             /<TestCaseN>.sh
+
+                                  /results/DataFolder/GBM07/3/nmf/result_for_simulateData1
+                                                                 /result_for_simulateData2
+                                                                 ...
+                                                                 /result_for_simulateDataN
+
+                                                             /gurobi/result_for_simulateData1
+                                                                    /result_for_simulateData2
+                                                                    ...
+                                                                    /result_for_simulateDataN
+```
+
+
+--------------
+In the git repository, the directories
+* schwartzlab/test/GTest
+* schwartzlab/test/NTest
+
+each contain one example of what `<TestCase1>.sh` could look like.
+Breifly, a call to `DecomposeSolver.py` should look something like
+```
+python DecomposeSolver.py '/home/some_user/SCS_decomposition/schwartzlab/' 9_28 GBM07 3 0.2 0.0 gurobi
+```
+
+where `/home/some_user/SCS_decomposition/schwartzlab/` would be
+replaced with an appropriate path on the user's file system.
 
 -------------------
 ## SimulateSCS.py
@@ -79,7 +171,7 @@ The purpose of SimulateSCS.py is to simulate realistic single-cell
 data that is similar to the observed single-cell data.  The program
 SimulateSCS.py is needed because the observed data are human subjects
 data, which cannot be redistributed.  SimulateSCS.py uses summary
-statistics from he observed data, which can be found in subdirectory
+statistics from the observed data, which can be found in subdirectory
 schwartzlab/data.
 
 SimulateSCS.py takes four arguments:
@@ -113,7 +205,10 @@ to variable seed at the top of the program.
 This program simulates bulk tumor data with desired number of samples
 from the single cell sequencing data Simulation is based on the
 Geometric Model described in the manuscript and uses a Dirichlet
-distribution
+distribution.  As written, this method requires access to the single
+cell data described in the manuscript, which is human subjects data
+and cannot be redistributed.  The method is included in this distribution
+as supplemental documentation to the manuscript.
 
 The arguments to DataSimulation.py are as follows:
 
@@ -146,7 +241,7 @@ Example calls to DataSimulation.py can be found in the scripts
 but those are for the observed data.
 
 If one wants to use the simulated data,
-simulated_GBM07_integer_CNV.csv or simulated_GBM07_integer_CNV.csv,
+`simulated_GBM07_integer_CNV.csv` or `simulated_GBM07_integer_CNV.csv`,
 then the third argument, TumorName, should be specified as
 
 > simulated_GBM07
@@ -194,136 +289,6 @@ also called non-negative matrix factorization (NMF, hence the N).
 
 `<TestCase1>.sh` through `<TestCaseN>.sh` are abstract names for the
 shell scripts that call DecomposeSolver.py.
-
-DataSimulation.py contains two auxiliary functions
-
-* ImportSCData(ImportSCData(ParentDirectory, TumorName, IntCNV=True, Cap=False)
-   - this is to import the data from single cell sequencing data
-       IntCNV: if or not choose the integer Copy number
-  
-* SimulateData(N=40, Cap=Cap)
-   - This is to simulate the desired number of simulated data and save
-     them in an independent folder as described above
-
-----------------------
-## DecomposeSolver.py
-
-This is to decompose the bulk tumor data to resolve the Copy number in
-loci in each fundamental cell type.  The code will retrieve the
-simulation data if you set up the input arguments correctly (see
-below)
-
-The code will solve all simulateData when you specify the number of
-tumor samples, e.g. if the number of tumor samples is 3, it will solve
-all the simulateData saved in the folder and save the results for each
-of the simulateData
-    
-  * ParentDirectory: specify a directory that contains the LLSolver folder
-
-  * DateFolder: you may do different simulation at different time,
-    this is just for you to record different date, consistent with the
-    one you set up with DataSimulation.py
-
-  * TumorName: pick a tumor from which you choose the single cell
-    data, now the available single cell data are from GBM07 or GBM33
-
-  * TumorNumber: specify a tumor sample number so it can get data from
-    that subfolder of the simulation folder
-
-  * reg1: regularization parameter of the penalty in nmf, only will be
-    effective if the solver is nmf
-
-  * alpha: regularization parameter of the penalty in ILP, only will
-    be effective if the solver is gurobi solver: choose nmf or gurobi
-    to solve the problem
-  
-The folder structure will be as following:
-```
-  /some/path/to/the/ParentDirectory:
-                                  /data/single cell sequencing data
-                                  /LLSolver/DataSimulation.py
-                                           /DecomposeSolver.py
-                                           /....
-                                           
-                                  /simulation/DateFolder/GBM07/3/<simulateData1>
-                                                                /<simulateData2>
-                                                                ...
-                                                                /<simulateDataN>
-                                                                
-                                  /test/GTest/<TestCase1>.sh
-                                             /<TestCase2>.sh
-                                             ...
-                                             /<TestCaseN>.sh
-                                       /NTest/<TestCase1>.sh
-                                             /<TestCase2>.sh
-                                             ...
-                                             /<TestCaseN>.sh
-                                             
-                                  /results/DataFolder/GBM07/3/nmf/result_for_simulateData1
-                                                                 /result_for_simulateData2
-                                                                 ...
-                                                                 /result_for_simulateDataN
-                                                              
-                                                             /gurobi/result_for_simulateData1
-                                                                    /result_for_simulateData2
-                                                                    ...
-                                                                    /result_for_simulateDataN
-```
-
-DecomposeSolver.py includes the following auxiliary functions:
-
-extractValue(directory)
-  
-> This is to retrieve the data in the replicate in the simulated data
-> generated by DataSimulation.py directory: the path to each
-> simulateData
-    
-SolveDecomposition(AllDataPaths, solver):
-  
-> This is to solve the problem with desired solver AllDataPaths: a
-> list contains the path to each simulateData :
-> [/path/to/simulateData1, /path/to/simulateData2, ...,
-> /path/to/simulateDataN ] solver: choose nmf or gurobi to solve the
-> problem
-
-and imports additional functions from NMF_solver.py
-
-In the git repository, the directories
-* schwartzlab/test/GTest
-* schwartzlab/test/NTest
-
-each contain one example of what <TestCase1>.sh could look like.
-
-----------------------  
-NMF_solver.py is called via DecomposeSolver.py, not directly by the user.
-
-NMF_solver.py includes one auxiliary function:
-
-`decompose(tumorMat, major_F, major_cellMat, refer_cellMat, initial_cellMat,
-           threshold=1, reg1=0.002, k=6, diploidRatio=0, IncludeInitial=True,
-           seedNum=None)`
-
-----------------------  
-GurobiILP_solver.py is called via DecomposeSolver.py, not directly by the user
-
-GurobiILP_solver.py includes the following auxiliary functions:
-
-  * updateProportion(B, Ctotal, cells=None, root=0, vType='C',
-                     dirichlet=False, dirA=None, beta=0.0)
-  * getDistanceMatrix(Ctotal):
-  * updateTree(B, Ctotal, cells=None, alpha=0.1, root=0):
-    calcObjVal(B, F, C, metric='L1'):
-  * updateCopyNum(B, F, S, CRefer, cells, alpha=0.1, root=0, vType='C',
-    stopVal=None, Cap=False):
-  * makeSurePath(directory):
-
-----------------------
-  
-`SCIP_solver.py` is called via `DecomposeSolver.py`, not directly by
-the user.
-
-`SCIP_solver.py` includes the same auxiliary functions as
-`GurobiILP_solver.py`.
 
 Reference:
 
