@@ -5,7 +5,8 @@ For each of the two tumors GBM07 and GBM33, this directory contains
 - one sample output file (in csv format) from Simulate_SCS.py
 
 The input files are based on the read Single-Cell Sequencing (SCS)
-data. GBM07RegionDivide.csv.\ Their meanings are as follows:
+data. GBM07RegionDivide.csv.
+Their meanings are as follows:
 
 - GBM33RegionDivide.csv indicate how many cells are in each of three
   regions of each tumor.
