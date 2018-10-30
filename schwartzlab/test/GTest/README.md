@@ -8,6 +8,6 @@ The way we named the script is as follows:
 - Gur = using gurobi
 - G07 = work on GBM07  
 - T3 = deconvolve 3 tumor samples
-- A00 = regularization parameter $\alpha$ for the penalty equals to 0.0
+- A02 = regularization parameter $\alpha$ for the penalty equals to 0.2
 
 The user might change the arguments inside the script and name it accordingly, the principle is that the user should know which script runs which job.
