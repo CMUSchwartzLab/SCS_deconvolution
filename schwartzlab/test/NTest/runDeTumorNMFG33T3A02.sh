@@ -12,8 +12,9 @@ cd '/pghbio/cure/hylei/TumorDecompose/LLSolver/'
 #3rd argv: tumor name, GBM07 or GBM33
 #4th argv: tumor number, in this serial, we do 3, 6, 9
 #5th argv: regularization parameter for modified NMF: will do 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
-#6th argv: regularization parameter for ILP tree structure: will do 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
-#7th argv: solver name: nmf or gurobi
+#6th argv: regularization parameter for ILP tree structure using gurobi: will do 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
+#7th argv: regularization parameter for SCIP, not available yet, put 0.0
+#8th argv: solver name: nmf or gurobi
 
-#call to deconvolve 3 samples of GBM07 using NMF
-python DecomposeSolver.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM07 3 0.0 0.2 nmf
+#call to deconvolve 3 samples of GBM33 using NMF
+python DecomposeSolver.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM33 3 0.2 0.2 0.0 nmf
