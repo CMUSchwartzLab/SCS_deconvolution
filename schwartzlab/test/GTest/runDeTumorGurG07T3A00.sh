@@ -12,8 +12,9 @@ cd '/home/haoyunl/SchwartzLab/Projects/TumorMatrixDecomposition/NewVersion1/LLSo
 #3rd argv: tumor name, GBM07 or GBM33
 #4th argv: tumor number, in this serial, we do 3, 6, 9
 #5th argv: regularization parameter for modified NMF: will do 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
-#6th argv: regularization parameter for ILP tree structure: will do 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
-#7th argv: solver name: nmf or gurobi
+#6th argv: regularization parameter for ILP tree structure using gurobi: will do 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
+#7th argv: regularization parameter for SCIP, not available now, put 0.0
+#8th argv: solver name: nmf or gurobi
 
 #call to deconvolve 3 GBM07 bulk data using gurobi
-python DecomposeSolver.py '/home/haoyunl/SchwartzLab/Projects/TumorMatrixDecomposition/NewVersion1/' 9_28 GBM07 3 0.2 0.0 gurobi
+python DecomposeSolver.py '/home/haoyunl/SchwartzLab/Projects/TumorMatrixDecomposition/NewVersion1/' 9_28 GBM07 3 0.2 0.2 0.0 gurobi
