@@ -10,7 +10,7 @@ DateFolder = str(sys.argv[2])   #specify a folder to retrive the data, it also s
 TumorName = str(sys.argv[3])    #pick a tumor, GBM07 or GBM33
 TumorNumber = int(sys.argv[4])  #specify a tumor sample number so it can get data from that subfolder
 reg1 = float(sys.argv[5])       #regularization parameter for nmf
-alpha = float(sys.argv[6])      #regularization parameter for ILP
+alpha = float(sys.argv[6])      #regularization parameter for gurobi
 beta = float(sys.argv[7])       #regularization parameter for SCIP
 solver = str(sys.argv[8])       #define what solver to be used, we used NMF and groubi for now, SCIP will be available later
 #get the directory of each simulated data
