@@ -1,6 +1,6 @@
 This is the top level directory for the repository
 
-github.com/CMUSchwartzLab/SCS_deconvolution
+https://github.com/CMUSchwartzLab/SCS_deconvolution
 
 that contains software to solve several formulations of the problem of
 deconvolving bulk tumor data into subpopulations, as described in (Lei
