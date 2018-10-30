@@ -8,7 +8,7 @@ Their meanings are as follows:
 - GBM07CopyNumberRate.csv and GBM33CopyNumberRate.csv show the probabilities of each copy number in {0,1,3 4,5,6,7,8,9,10} in each of three regions of the tumor. 
 - GBM07PositionRate.csv and GBM33PositionRate.csv show the probabilities that each position has a copy number other than 2.
 
-The output file is the **Simulated** SCS data based on the real SCS data.
+The output file is the **Simulated** SCS data based on the real SCS data, so they have the prefix *simulated_* at the beginning of the file name.
 
 
 Much more information can be found in ../LLSolver/README.md
