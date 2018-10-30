@@ -192,7 +192,7 @@ should be abstractly as follows:
 
 Here, GBM07 is the tumor name selected and could be GBM33
 instead). If the user used *simulated SCS* data and specified TumorName 
-as *simuluated_GBM07* in previous step, the directory name would be simuluated_GBM07.
+as *simuluated_GBM07* when calling DataSimulation.py, the directory name would be simuluated_GBM07.
 Here, 3 is number of samples.  GTest refers to the
 phylogeny-based method, which uses the Gurobi (hence the G) python
 library, while Ntest refers to the phylogeny-free method, which is
@@ -236,9 +236,9 @@ the simulateData
 
   * TumorName: pick a tumor from which you choose the single cell
     data, now the available single cell data are from GBM07 or GBM33. 
-    If you are using *simulated SCS* data in previous steps, 
+    If you are using *simulated SCS* data in Bulk Data Simualtion step, 
     you should specify this argurment as simulated_GBM07 or simulated_GBM33 
-    to be consistent with previous steps. This argument is also used as directory
+    to be consistent with the previous step. This argument is also used as directory
     name in the resutls directory (see below)
 
   * TumorNumber: specify a tumor sample number so it can get data from
@@ -300,7 +300,9 @@ python DecomposeSolver.py '/home/some_user/SCS_decomposition/schwartzlab/' 9_28 
 where `/home/some_user/SCS_decomposition/schwartzlab/` would be
 replaced with an appropriate path on the user's file system.
 
-Again, the `GBM07` directory under the `simulation` and `results` directory would be `simulated_GBM07` if the user specifed the TumorName as `simulated_GBM07`. Also, if the user once specified TumorName as `simulated_GBM07`, this should be used for all callings so that the program can have right path for input and output.
+Again, the `GBM07` directory under the `simulation` and `results` directory would be `simulated_GBM07` if the user specifed the TumorName as `simulated_GBM07`. Also, if the user once specified TumorName as `simulated_GBM07` when calling DataSimulation.py, this should be used to call DecomposeSolver.py so that the program can have right path for input and output. However, this rule does not apply to call SimulateSCS.py since the input for the program are based on real observed SCS data.
+
+
 Reference:
 
 Haoyun Lei, Bochuan Lyu, E. Michael Gertz, Alejandro A. Schaffer,
