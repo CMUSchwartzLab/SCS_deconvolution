@@ -189,12 +189,12 @@ def generateCandCRefer (allSC, CSel, CReferSel, tumorType='GBM07', dtype=np.floa
     copyNum = allSC.shape[0]
     cellsOrig = np.sum(CReferSel)
 
-    if (tumorType == 'GBM07'):
+    if (tumorType == 'GBM07'or tumorType=='simulated_GBM07'):
         regions = [list(range(0,52)), list(range(52, 127)), list(range(127, allSC.shape[1]))]
-    elif (tumorType == 'GBM33'):
+    elif (tumorType == 'GBM33' or tumorType =='simulated_GBM33'):
         regions = [list(range(0,57)), list(range(57,131)), list(range(131, allSC.shape[1]))]
     else:
-        sys.exit('Please Use GBM07 or GBM33 as tumorType!')
+        sys.exit('Please Use GBM07 or GBM33 (or corresponding data from simulated SCS) as tumorType!')
 
 
     CIndexList = [0] * cells
