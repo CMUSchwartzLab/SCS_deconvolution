@@ -12,7 +12,7 @@ TumorNumber = int(sys.argv[4])  #specify a tumor sample number so it can get dat
 reg1 = float(sys.argv[5])       #regularization parameter for nmf
 alpha = float(sys.argv[6])      #regularization parameter for ILP
 beta = float(sys.argv[7])       #regularization parameter for SCIP
-solver = str(sys.argv[8])
+solver = str(sys.argv[8])       #define what solver to be used, we used NMF and groubi for now, SCIP will be available later
 #get the directory of each simulated data
 #AllDataPaths = glob.glob(ParentDirectory +'simulation/*.mat')
 AllDataPaths = glob.glob('%ssimulation/%s/%s/%s/*.mat'%(ParentDirectory, DateFolder, TumorName, str(TumorNumber)))
