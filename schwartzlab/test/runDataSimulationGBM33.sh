@@ -23,9 +23,11 @@ this is a description of the seven arguments
 7th argv: Boolean, if (True) or not (False) cap the copy numbers that are larger than 10 to 10
 COMMENT
 
-#The call is to simulate 3, 6, 9 tumor samples from the SCS data from GBM33
+#The call is to simulate 3, 6, 9, 33, 99 tumor samples from the SCS data from GBM33
 #At least the directories will need to be changed by the user depending on the user's file naming conventions
 python DataSimulation.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM33 3 [10,0.1,0.01] 40 True
 python DataSimulation.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM33 6 [10,0.1,0.01] 40 True
 python DataSimulation.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM33 9 [10,0.1,0.01] 40 True
+python DataSimulation.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM33 33 [10,0.1,0.01] 40 True
+python DataSimulation.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM33 99 [10,0.1,0.01] 40 True
 
