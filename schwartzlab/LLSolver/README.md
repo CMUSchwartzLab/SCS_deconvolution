@@ -248,9 +248,11 @@ the simulateData
     effective if the solver is nmf
 
   * alpha: regularization parameter of the penalty in ILP, only will
-    be effective if the solver is gurobi 
+    be effective if the solver is gurobi
+  * beta: regularization parameter of the penalty in ILP, only will
+    be effective if the solver is SCIP, since SCIP is not available now, we always put 0.0
   * solver: choose nmf or gurobi
-    to solve the problem
+    to solve the problem, SCIP will be available later.
 
 The folder structure will be as following:
 ```
