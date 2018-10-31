@@ -244,14 +244,15 @@ the simulateData
   * TumorNumber: specify a tumor sample number so it can get data from
     that subfolder of the simulation folder
 
-  * reg1: regularization parameter of the penalty in nmf, only will be
-    effective if the solver is nmf
+  * reg1: regularization parameter of the penalty in NMF, will be
+    effective only if the solver is NMF
 
-  * alpha: regularization parameter of the penalty in ILP, only will
-    be effective if the solver is gurobi
-  * beta: regularization parameter of the penalty in ILP, only will
-    be effective if the solver is SCIP, since SCIP is not available now, we always put 0.0
-  * solver: choose nmf or gurobi
+  * alpha: regularization parameter of the penalty in ILP, will
+    be effective only if the solver is gurobi
+  * beta: regularization parameter of the penalty in ILP, will
+    be effective only if the solver is SCIP, since the verion using SCIP 
+    is not yet available now, we always put 0.0
+  * solver: choose nmf or gurobi  (here in lower case)
     to solve the problem, SCIP will be available later.
 
 The folder structure will be as following:
@@ -294,7 +295,7 @@ In the git repository, the directories
 * schwartzlab/test/NTest
 
 each contain one example of what `<TestCase1>.sh` could look like.
-Breifly, a call to `DecomposeSolver.py` should look something like
+Briefly, a call to `DecomposeSolver.py` should look something like
 ```
 python DecomposeSolver.py '/home/some_user/SCS_decomposition/schwartzlab/' 9_28 GBM07 3 0.2 0.0 gurobi
 ```
@@ -302,7 +303,11 @@ python DecomposeSolver.py '/home/some_user/SCS_decomposition/schwartzlab/' 9_28 
 where `/home/some_user/SCS_decomposition/schwartzlab/` would be
 replaced with an appropriate path on the user's file system.
 
-Again, the `GBM07` directory under the `simulation` and `results` directory would be `simulated_GBM07` if the user specifed the TumorName as `simulated_GBM07`. Also, if the user once specified TumorName as `simulated_GBM07` when calling DataSimulation.py, this should be used to call DecomposeSolver.py so that the program can have right path for input and output. However, this rule does not apply to call SimulateSCS.py since the input for the program are based on real observed SCS data.
+Again, the `GBM07` directory under the `simulation` and `results` directory would be `simulated_GBM07` 
+if the user specifed the TumorName as `simulated_GBM07`. Also, if the user once specified TumorName 
+as `simulated_GBM07` when calling DataSimulation.py, the tumor name simulated_GBM07 should also be used 
+to call DecomposeSolver.py so that the program can have right path for input and output. However, this 
+rule does not apply to call SimulateSCS.py since the input for the program are based on real observed SCS data.
 
 
 Reference:
