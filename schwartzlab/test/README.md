@@ -1,7 +1,9 @@
 # Test Script Directory
 
 This directory and its subdirectories GTest and NTest are for storing
-the scripts for submitting the job to the queue.
+the scripts that call DecomposeSolver.py. When running the tests fo
+the manuscrit, such scripts were submitted to a compute farm that accepts
+bash scripts.
 
 runDataSimulationGBM07.sh and runDataSimulationGBM33.sh are example
 scripts to run DataSimulation.py; they contain some internal
