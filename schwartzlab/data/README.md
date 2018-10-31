@@ -18,7 +18,7 @@ Their meanings are as follows:
 - GBM07PositionRate.csv and GBM33PositionRate.csv show the
   probabilities that each position has a copy number other than 2.
 
-The output file is the **Simulated** SCS data based on the real SCS
+The output files contain the **Simulated** SCS data based on the summary probability distributions of the real SCS
 data, so they have the prefix *simulated_* at the beginning of the
 file name.
 
