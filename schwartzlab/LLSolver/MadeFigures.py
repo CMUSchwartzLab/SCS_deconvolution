@@ -404,6 +404,6 @@ def PlotAllTrees(SavePath, TumorNumber, ReguPara, solver='gurobi'):
         Paths = glob.glob('%sresults/%s/%s/%s/%s/result*alpha%s.mat' % (ParentDirectory, DateFolder,
                                                                         TumorName, TumorNumber, solver, item))
         testFunction.CheckDirectory('%s%s/%s/' % (SavePath, TumorNumber, item))
-        for i in len(Paths):
+        for i in range(len(Paths)):
             plotTree(S=extractValue(Paths[i], 'TreeStr'), root=12,
                                     filename='%s%s/%s/' % (SavePath, TumorNumber, item)+'%s.png' % i)
