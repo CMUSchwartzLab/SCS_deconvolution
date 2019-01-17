@@ -15,6 +15,7 @@ cd '/pghbio/cure/hylei/TumorDecompose/LLSolver/'
 #6th argv: regularization parameter for ILP tree structure using gurobi: will do 0.0, 0.2, 0.4, 0.6, 0.8, 1.0
 #7th argv: regularization parameter for SCIP, not available yet, put 0.0
 #8th argv: solver name: nmf or gurobi
+#9th argv: noise level
 
 #call to deconvolve 3 samples of GBM07 using NMF
-python DecomposeSolver.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM07 3 0.2 0.2 0.0 nmf
+python DecomposeSolver.py '/pghbio/cure/hylei/TumorDecompose/' 9_28 GBM07 3 0.2 0.2 0.0 nmf 0.0
