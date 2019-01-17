@@ -297,7 +297,7 @@ In the git repository, the directories
 each contain one example of what `<TestCase1>.sh` could look like.
 Briefly, a call to `DecomposeSolver.py` should look something like
 ```
-python DecomposeSolver.py '/home/some_user/SCS_decomposition/schwartzlab/' 9_28 GBM07 3 0.2 0.0 gurobi
+python DecomposeSolver.py '/home/some_user/SCS_decomposition/schwartzlab/' 9_28 GBM07 3 0.2 0.0 gurobi 0.0
 ```
 
 where `/home/some_user/SCS_decomposition/schwartzlab/` would be
