@@ -13,6 +13,7 @@ reg1 = float(sys.argv[5])       #regularization parameter for nmf
 alpha = float(sys.argv[6])      #regularization parameter for gurobi
 beta = float(sys.argv[7])       #regularization parameter for SCIP
 solver = str(sys.argv[8])       #define what solver to be used, we used NMF and groubi for now, SCIP will be available later
+noise = float(sys.argv[9])      #noise level introduced into reference cells (CRefer)
 #get the directory of each simulated data
 #AllDataPaths = glob.glob(ParentDirectory +'simulation/*.mat')
 AllDataPaths = glob.glob('%ssimulation/%s/%s/%s/*.mat'%(ParentDirectory, DateFolder, TumorName, str(TumorNumber)))
@@ -23,13 +24,14 @@ def extractValue(directory):
 
 
 
-def SolveDecomposition(AllDataPaths, solver):
+def SolveDecomposition(AllDataPaths, solver, noise):
     N = len(AllDataPaths)
     #start_time = time.time()
     #accurate_in_cells = np.zeros((N, k))
     #accurate_rows = np.zeros(N)
     for z in range(N):
         CIndex, CRefer, CReferIndex, CInitial, CTrue, FTrue, FTrueAll, TumorSample, dirA, COrigin=extractValue(AllDataPaths[z])
+        CRefer = testFunction.addNoise(CRefer, noise) #add noise to the original reference cells
         TumorNumber = TumorSample.shape[1]
         #choose which solver you want to use:
         if solver == 'nmf':
@@ -40,14 +42,14 @@ def SolveDecomposition(AllDataPaths, solver):
             testFunction.CheckDirectory(result_path)
             cells = CTrue.shape[1]
             print("No.%s experiment(s) using %s"%(z+1, solver))
-            print(" From %s tumor samples, infer %s cells" %
-                  (str(TumorNumber), str(cells)))
+            print(" From %s tumor samples, infer %s cells, noise level is %s" %
+                  (str(TumorNumber), str(cells), str(noise)))
             iter_nn, dist, accuracy, right_row, rmsd_c, rmsd_f, rms_c, rms_f, InferC, InferF=\
                 NS.decompose(TumorSample, FTrue, CTrue, CRefer, CInitial, reg1=reg1, k=cells)
             meanAcc = np.sum(accuracy)/cells
             #accurate_in_cells[z, :] = accuracy[:, 0]
             #accurate_rows[z] = right_row
-            sio.savemat(result_path + 'result' + str(z) + 'alpha' + str(reg1) + '.mat',
+            sio.savemat(result_path + 'result' + str(z) + 'alpha' + str(reg1) + 'noise' + str(noise) + '.mat',
                              {'CTrue': CTrue, 'CInferred': InferC, 'CRefer': CRefer, 'CIndex': CIndex,
                               'CReferIndex': CReferIndex, 'FTrue':FTrue, 'FInferred': InferF, 'FTrueAll': FTrueAll,
                               'Accuracy': accuracy, 'rmsdC': rmsd_c, 'rmsdF': rmsd_f, 'rmsInC': rms_c, 'rmsInF': rms_f,
@@ -97,7 +99,7 @@ def SolveDecomposition(AllDataPaths, solver):
             step = 1
 
             Cprev = np.matrix(Ctotal, dtype=np.float)
-            print(" regularization parameter=%s, from %s tumor samples, infer %s cells." % (str(alpha), str(TumorNumber),str(cells)))
+            print(" regularization parameter=%s, from %s tumor samples, infer %s cells, noise level is %s." % (str(alpha), str(TumorNumber),str(cells), str(noise)))
             while(1):
                 #print("Step:", step)
                 [F, objVal1] = GS.updateProportion(
@@ -132,7 +134,7 @@ def SolveDecomposition(AllDataPaths, solver):
             rms_c = testFunction.calcRMSInCell(CUnknown, CTrue, CellsInCol=False)
             rms_f = testFunction.calcRMSInCell(F, FTrue, Cell=False, CellsInCol=False)
 
-            sio.savemat(result_path + 'result' + str(z) + 'alpha' + str(alpha) + '.mat',
+            sio.savemat(result_path + 'result' + str(z) + 'alpha' + str(alpha) + 'noise' + str(noise) + '.mat',
                         {'meanAcc': meanAcc, 'Accuracy': acc, 'CTrue': CTrue.T, 'CRefer': CRefer[0:6,:].T,
                         'totalAcc': totalAcc, 'CInferred': CUnknown.T, 'FTrueAll': FTrueAll, 'FTrue': FTrue.T,
                          'FInferred': F.T, 'Step': step, 'rmsdC': rmsdC, 'rmsdF': rmsdF, 'CIndex': CIndex,
@@ -176,8 +178,8 @@ def SolveDecomposition(AllDataPaths, solver):
             step = 1
 
             Cprev = np.matrix(Ctotal, dtype=np.float)
-            print(" regularization parameter=%s, from %s tumor samples, infer %s cells." % (
-                str(alpha), str(TumorNumber), str(cells)))
+            print(" regularization parameter=%s, from %s tumor samples, infer %s cells, noise level is %s." % (
+                str(alpha), str(TumorNumber), str(cells), str(noise)))
             while(1):
                 #print("Step:", step)
                 [F, objVal1] = SP.updateProportion(
@@ -215,7 +217,7 @@ def SolveDecomposition(AllDataPaths, solver):
             rms_f = testFunction.calcRMSInCell(
                 F, FTrue, Cell=False, CellsInCol=False)
 
-            sio.savemat(result_path + 'result' + str(z) + 'alpha' + str(beta) + '.mat',
+            sio.savemat(result_path + 'result' + str(z) + 'alpha' + str(beta) + 'noise' + str(noise) + '.mat',
                         {'meanAcc': meanAcc, 'Accuracy': acc, 'CTrue': CTrue.T, 'CRefer': CRefer[0:6, :].T,
                          'totalAcc': totalAcc, 'CInferred': CUnknown.T, 'FTrueAll': FTrueAll, 'FTrue': FTrue.T,
                          'FInferred': F.T, 'Step': step, 'rmsdC': rmsdC, 'rmsdF': rmsdF, 'CIndex': CIndex,
@@ -228,12 +230,13 @@ def SolveDecomposition(AllDataPaths, solver):
                 
 if __name__ == '__main__':
     start_time = time.time()
-    SolveDecomposition(AllDataPaths=AllDataPaths, solver=solver)
+    SolveDecomposition(AllDataPaths=AllDataPaths, solver=solver, noise=noise)
     RunTime = time.time() - start_time
     print("\nTotal Runtime is %0.2f hours." % (RunTime / 3600.0))
     print("Simulate tumor from %s"%TumorName) 
     print("Simulate %s tumor sample(s) in each region, %s tumors in total." % (TumorNumber/3, TumorNumber))
     print("Using %s as solver" % solver)
+    print("Noise Level is %s" % noise)
     if solver == 'gurobi':
         print("Regularization paramter of penalty is %s" % str(alpha))
     elif solver == 'nmf':

@@ -345,5 +345,24 @@ def extraMajorComponent(whole_mat, major_index):
     return np.array(temp)
 ##
 
-
-
+'''
+Function to add noise to the reference cell
+'''
+def addNoise(originalMat, NoiseLv):
+    if NoiseLv == 0:
+        return originalMat
+    else:
+        m, n = originalMat.shape
+        k = int(m * NoiseLv)
+        for i in range(n):
+            pos = np.random.choice(m, k, replace=False)
+            for j in pos:
+                flag = np.random.rand()
+                if flag < 0.5:
+                    originalMat[j,i] = originalMat[j,i] + 1
+                else:
+                    if originalMat[j,i] == 0:
+                        originalMat[j,i] = originalMat[j,i] + 1
+                    else:
+                        originalMat[j,i] = originalMat[j,i] - 1
+        return originalMat
