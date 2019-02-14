@@ -97,6 +97,8 @@ grouped barplot:
     a grouped barplot to show the average performance 
     in random initialization and w/ penalty
 """
+
+
 def GroupBarPlot(solver, groupedData, key, kw, DipData=None, NoInitialData=None):
     #merge the dataframe by pivoiting the TumorSamples columns
     df = pd.melt(groupedData, id_vars=['Tumor Samples'],
@@ -116,9 +118,38 @@ def GroupBarPlot(solver, groupedData, key, kw, DipData=None, NoInitialData=None)
     plt.legend(title='ReguPara', loc='center right',
                bbox_to_anchor=(1.22, 0.65))
     #plt.show()
-    plt.savefig('%sfigures/%s/%s/%s_%s_%s_barplot.png' %
+    plt.savefig('%sfigures/%s/%s/%s_%s_%s_barplot.eps' %
                 (ParentDirectory, SavedFolder, TumorName, solver, key, kw),
-                bbox_inches='tight', dpi=600)
+                bbox_inches='tight', format='eps', dpi=1000)
+
+
+'''
+Plot for different noise level
+'''
+
+
+def GroupBarPlotNoise(solver, groupedData, key, kw, DipData=None, NoInitialData=None):
+    #merge the dataframe by pivoiting the TumorSamples columns
+    df = pd.melt(groupedData, id_vars=['Tumor Samples'],
+                 var_name='Noise', value_name='Average %s' % key)
+    #plt.figure(figsize=(8, 6))
+    b = sns.barplot(x='Tumor Samples', y='Average %s' % key,
+                    hue='Noise', data=df)
+    b.set_xlabel('Tumor Samples', fontsize=16)
+    b.set_ylabel('Average %s' % key, fontsize=16)
+    if DipData != None:
+        # plot a dashed line of average  result of Diploid guess
+        plt.axhline(DipData, color='k', linestyle='--')
+    if NoInitialData != None:
+        # plot a dashed line of average  result of random initialization
+        plt.axhline(NoInitialData, color="#e74c3c", linestyle='--')
+    plt.title('Average %s of %s' % (key, kw), fontsize=18)
+    plt.legend(title='NoiseLvl', loc='center right',
+               bbox_to_anchor=(1.22, 0.65))
+    #plt.show()
+    plt.savefig('%sfigures/%s/%s/%s_%s_%s_barplot_nosie.eps' %
+                (ParentDirectory, SavedFolder, TumorName, solver, key, kw),
+                bbox_inches='tight', format='eps', dpi=1000)
 
 
 
@@ -197,9 +228,9 @@ def PlotCNV(dataLst1, dataLst2, solver):
     fig.text(-0.005, 0.5, 'Copy Number', va='center',
              rotation='vertical', fontsize=17)
     plt.tight_layout()
-    plt.savefig('%sfigures/%s/%s/%s_CNV.png' %
+    plt.savefig('%sfigures/%s/%s/%s_CNV.eps' %
                 (ParentDirectory, SavedFolder, TumorName, solver),
-                bbox_inches='tight', dpi=600)
+                bbox_inches='tight', format='eps', dpi=1000)
 
 
 """
@@ -238,9 +269,9 @@ def BarPlotOfSolver(NMFdata, gurobiData, value_name, kw):
     plt.title("%s %s" % (kw, value_name), fontsize=18)
     plt.legend(title='Method', loc='center right', bbox_to_anchor=(1.4, 0.65))
     #plt.show()
-    plt.savefig('%sfigures/%s/%s/%s_%s_compare.png' %
+    plt.savefig('%sfigures/%s/%s/%s_%s_compare.eps' %
                 (ParentDirectory, SavedFolder, TumorName, value_name, kw),
-                bbox_inches='tight', dpi=600)
+                bbox_inches='tight', format='eps', dpi=1000)
 
 
 """
@@ -254,9 +285,9 @@ def DiplodBoxPlot(IndividualDiploid, AverageDiploid, kw):
     plt.axhline(y=AverageDiploid, color='k', ls='--')
     plt.ylabel('%s' % kw)
     plt.title('%s in Each Cell Component' % kw, fontsize=14)
-    plt.savefig('%sfigures/%s/%s/diploidBOX_%s.png' %
+    plt.savefig('%sfigures/%s/%s/diploidBOX_%s.eps' %
                 (ParentDirectory, SavedFolder, TumorName, kw),
-                bbox_inches='tight', dpi=600)
+                bbox_inches='tight', format='eps', dpi=1000)
 
 """
 Function of boxplot for the measurement in each cell component
@@ -309,9 +340,9 @@ def BoxPlotInCell(solver, dataframe, kw1, kw2):
     axs[-1].legend(handles, labels, title='ReguPara',
                    loc='center right', bbox_to_anchor=(1.2, 0.5))
     plt.tight_layout()
-    plt.savefig('%sfigures/%s/%s/%s_%s_%s_boxpplot.png' %
+    plt.savefig('%sfigures/%s/%s/%s_%s_%s_boxpplot.eps' %
                 (ParentDirectory, SavedFolder, TumorName, solver, kw1, kw2),
-                bbox_inches='tight', dpi=600)
+                bbox_inches='tight', format='eps', dpi=1000)
 
 """
 Function to boxplot the comparision between Tree-free and tree-based methods
@@ -357,16 +388,16 @@ def BoxPlotComparison(NMFdata, gurobiData, kw1, kw2):
 
     handles, labels = axs[-1].get_legend_handles_labels()
     fig.suptitle(
-        '%s of %s in Each Cell Component' % (kw1, kw2), y=1.05, fontsize=21)
+        '%s Comparison of %s in Each Cell Component between Two Methods' % (kw1, kw2), y=1.05, fontsize=21)
     fig.text(0.5, -0.005, 'Cell Components', ha='center', fontsize=17)
     fig.text(-0.005, 0.5, '%s' % kw1, va='center',
              rotation='vertical', fontsize=17)
-    axs[-1].legend(handles, labels, title='ReguPara',
-                   loc='center right', bbox_to_anchor=(1.2, 0.5))
+    axs[-1].legend(handles, labels, title='Method',
+                   loc='center right', bbox_to_anchor=(1.33, 0.5))
     plt.tight_layout()
-    plt.savefig('%sfigures/%s/%s/%s_%s_compareboxpplot.png' %
+    plt.savefig('%sfigures/%s/%s/%s_%s_compareboxpplot.eps' %
                 (ParentDirectory, SavedFolder, TumorName, kw1, kw2),
-                bbox_inches='tight', dpi=600)
+                bbox_inches='tight', format='eps', dpi=1000)
 
 """
 Functions to plot all the tree structure
@@ -374,15 +405,18 @@ Functions to plot all the tree structure
 
 #This is to take the Tree Matrix in the result as input 
 #and output the tree
+
+
 def plotTree(S, root, filename='example.png'):
-    G = nx.DiGraph()
+    G = nx.DiGraph(dpi=1600)
+
     fromList = []
     toList = []
 
-    G.add_node(root)
+    G.add_node(root, shape='circle')
     for i in range(S.shape[0]):
         if (i != root):
-            G.add_node(i)
+            G.add_node(i, shape='circle')
 
     for i in range(S.shape[0]):
         for j in range(S.shape[1]):
@@ -393,8 +427,10 @@ def plotTree(S, root, filename='example.png'):
     for i in range(len(fromList)):
         G.add_edge(fromList[i], toList[i], weight=1)
     elarge = [(u, v) for (u, v, d) in G.edges(data=True)]
-    p = nx.drawing.nx_pydot.to_pydot(G)
 
+   #plt.figure(figsize=(18,18))
+    p = nx.drawing.nx_pydot.to_pydot(G)
+    p.set_size('"100,100!"')
     p.write_png(filename)
 
 #This is to plot all the tree in the result, 
